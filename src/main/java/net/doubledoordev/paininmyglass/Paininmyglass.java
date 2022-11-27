@@ -22,14 +22,12 @@ import org.slf4j.Logger;
 @Mod("paininmyglass")
 public class Paininmyglass
 {
-
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
     Random random;
 
     public Paininmyglass()
     {
-
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, PaininMyGlassConfig.spec);
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -42,13 +40,16 @@ public class Paininmyglass
     @SubscribeEvent
     public void closeContainer(PlayerContainerEvent.Close event)
     {
-        NonNullList<Slot> slots = event.getContainer().slots;
-        List<? extends String> nameOptions = PaininMyGlassConfig.SERVER.itemNames.get();
-
-        for (Slot slot : slots)
+        if (PaininMyGlassConfig.SERVER.isItOn.get())
         {
-            if (!slot.hasItem() && random.nextDouble() < PaininMyGlassConfig.SERVER.chanceForPane.get())
-                slot.set(new ItemStack(Items.LIGHT_GRAY_STAINED_GLASS_PANE).setHoverName(new TextComponent(nameOptions.get(random.nextInt(nameOptions.size())))));
+            NonNullList<Slot> slots = event.getContainer().slots;
+            List<? extends String> nameOptions = PaininMyGlassConfig.SERVER.itemNames.get();
+
+            for (Slot slot : slots)
+            {
+                if (!slot.hasItem() && random.nextDouble() < PaininMyGlassConfig.SERVER.chanceForPane.get())
+                    slot.set(new ItemStack(Items.LIGHT_GRAY_STAINED_GLASS_PANE).setHoverName(new TextComponent(nameOptions.get(random.nextInt(nameOptions.size())))));
+            }
         }
     }
 }
